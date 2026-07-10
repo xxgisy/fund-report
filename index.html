@@ -3,37 +3,352 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>基金日报</title>
+  <meta name="color-scheme" content="light">
+  <title>基金日报 2026-07-10</title>
   <style>
+    :root {
+      --blue: #1677ff;
+      --text: #172033;
+      --subtext: #475467;
+      --muted: #667085;
+      --line: #d8e1ed;
+      --surface: #ffffff;
+      --page: #f3f6fa;
+      --up: #d93026;
+      --down: #00875a;
+    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: #f3f6fb;
-      color: #172033;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page);
+      color: var(--text);
+      font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
     }
-    main {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 12px;
-    }
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(20, 35, 70, 0.12);
-    }
-    p {
-      color: #667085;
-      font-size: 14px;
-      text-align: center;
+    a { color: inherit; }
+    .report-header { background: var(--blue); color: white; }
+    .header-inner { max-width: 920px; margin: 0 auto; padding: 28px 20px 24px; }
+    .header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.25; }
+    .report-date { margin: 6px 0 0; color: #eaf2ff; font-size: 15px; }
+    .total-profit { text-align: right; }
+    .total-profit span { display: block; color: #eaf2ff; font-size: 13px; }
+    .total-profit strong { display: block; margin-top: 3px; font-size: 30px; }
+    .status { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.28); color: #f4f8ff; font-size: 14px; }
+    main { max-width: 920px; margin: 0 auto; padding: 22px 20px 44px; }
+    .overview { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 32px; padding: 4px 0 28px; }
+    .overview h2, .funds-title { margin: 0 0 16px; font-size: 22px; }
+    .market-value span { display: block; color: var(--muted); font-size: 14px; }
+    .market-value strong { display: block; margin-top: 6px; font-size: 30px; }
+    .position-row + .position-row { margin-top: 12px; }
+    .position-row > div:first-child { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; }
+    .position-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .position-row strong { color: var(--subtext); flex: 0 0 auto; }
+    .bar { height: 8px; margin-top: 6px; overflow: hidden; background: #dfe7f2; border-radius: 4px; }
+    .bar i { display: block; height: 100%; background: var(--blue); border-radius: 4px; }
+    .funds-title { padding-top: 22px; border-top: 1px solid var(--line); }
+    .fund-list { display: grid; gap: 14px; }
+    .fund-card { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 3px 10px rgba(31,41,55,.05); }
+    .fund-heading { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: start; }
+    .fund-index { color: var(--muted); font-weight: 700; font-size: 14px; padding-top: 4px; }
+    .fund-heading h2 { margin: 0; font-size: 19px; line-height: 1.4; }
+    .fund-heading p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .growth { font-size: 21px; white-space: nowrap; }
+    .fund-body { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 24px; align-items: center; margin: 18px 0 0 46px; }
+    .fund-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; margin: 0; }
+    .fund-stats div { min-width: 0; }
+    dt { color: var(--muted); font-size: 13px; }
+    dd { margin: 4px 0 0; font-size: 18px; font-weight: 700; }
+    .sparkline { width: 100%; height: auto; background: #f3f6fa; border-radius: 6px; }
+    .sparkline polyline { fill: none; stroke: currentColor; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+    .sparkline circle { fill: currentColor; }
+    .spark-base { stroke: #d8e1ed; stroke-width: 1; }
+    .sparkline.empty { min-height: 76px; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+    .hint { margin: 18px 0 0 46px; padding-top: 14px; border-top: 1px solid #edf1f6; color: var(--subtext); font-size: 14px; }
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+    .flat { color: var(--muted); }
+    footer { max-width: 920px; margin: 0 auto; padding: 0 20px 34px; color: var(--muted); font-size: 13px; text-align: center; }
+    footer a { color: var(--blue); }
+    @media (max-width: 680px) {
+      .header-inner { padding: 22px 16px 20px; }
+      h1 { font-size: 25px; }
+      .total-profit strong { font-size: 25px; }
+      main { padding: 18px 14px 36px; }
+      .overview { grid-template-columns: 1fr; gap: 20px; }
+      .fund-card { padding: 16px; }
+      .fund-heading { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
+      .growth { grid-column: 2; font-size: 20px; }
+      .fund-heading h2 { font-size: 18px; }
+      .fund-body { grid-template-columns: 1fr; gap: 14px; margin: 16px 0 0 36px; }
+      .fund-stats { gap: 14px; }
+      dd { font-size: 17px; }
+      .hint { margin-left: 36px; line-height: 1.6; }
+      footer { padding-inline: 14px; }
     }
   </style>
 </head>
 <body>
+  <header class="report-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div><h1>基金日报</h1><p class="report-date">2026-07-10</p></div>
+        <div class="total-profit"><span>最新盈亏</span><strong class="down">-257.80</strong></div>
+      </div>
+      <p class="status">净值日期不一致：2026-07-09 至 2026-07-10 · 生成于 22:04</p>
+    </div>
+  </header>
   <main>
-    <p>Updated: 2026-07-09 05:31:37</p>
-    <img src="./fund-report.png" alt="基金日报">
+    <section class="overview">
+      <div class="market-value"><h2>组合概览</h2><span>组合市值</span><strong>21,101.45</strong></div>
+      <div><h2>持仓占比 TOP5</h2>
+        <div class="position-row">
+          <div><span>易方达安源中短债债券A</span><strong>52.30%</strong></div>
+          <div class="bar"><i style="width:52.29728826268874160596049665%"></i></div>
+        </div>
+        <div class="position-row">
+          <div><span>天弘电网设备特高压指数C</span><strong>20.56%</strong></div>
+          <div class="bar"><i style="width:20.56104597573046740367083099%"></i></div>
+        </div>
+        <div class="position-row">
+          <div><span>易方达环保主题混合A</span><strong>14.56%</strong></div>
+          <div class="bar"><i style="width:14.56201259294924840830462025%"></i></div>
+        </div>
+        <div class="position-row">
+          <div><span>鹏华沪深300指数增强A</span><strong>11.50%</strong></div>
+          <div class="bar"><i style="width:11.49985732220298966762575576%"></i></div>
+        </div>
+        <div class="position-row">
+          <div><span>国泰上证科创板人工智能ETF发起联接A</span><strong>0.52%</strong></div>
+          <div class="bar"><i style="width:0.5191585187128711751338067600%"></i></div>
+        </div></div>
+    </section>
+    <h2 class="funds-title">单只基金</h2>
+    <section class="fund-list">
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">01</span>
+          <div>
+            <h2>天弘恒生科技ETF联接C</h2>
+            <p>012349 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-0.25%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>64.20</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-0.16</dd></div>
+            <div><dt>持仓收益</dt><dd class="down">-7.09%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.30%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,46.1 30.0,62.0 50.0,47.7 70.0,40.0 90.0,40.3 110.0,42.2 130.0,37.9 150.0,33.4 170.0,37.0 190.0,14.2 210.0,14.0 230.0,15.3"></polyline><circle cx="230.0" cy="15.3" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">02</span>
+          <div>
+            <h2>天弘电网设备特高压指数C</h2>
+            <p>025833 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-1.22%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>4,338.68</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-53.59</dd></div>
+            <div><dt>持仓收益</dt><dd class="down">-12.81%</dd></div>
+            <div><dt>持仓占比</dt><dd>20.56%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,14.0 30.0,29.0 50.0,31.6 70.0,28.5 90.0,36.0 110.0,45.1 130.0,43.8 150.0,47.6 170.0,54.6 190.0,61.9 210.0,59.4 230.0,62.0"></polyline><circle cx="230.0" cy="62.0" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">03</span>
+          <div>
+            <h2>摩根标普500指数(QDII)人民币A</h2>
+            <p>017641 · 净值日 2026-07-09</p>
+          </div>
+          <strong class="growth up">+0.72%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>10.58</dd></div>
+            <div><dt>最新盈亏</dt><dd class="up">+0.08</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+5.77%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.05%</dd></div>
+          </dl>
+          <svg class="sparkline up" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,59.7 30.0,59.8 50.0,62.0 70.0,38.0 90.0,23.5 110.0,29.9 130.0,29.9 150.0,31.0 170.0,15.7 190.0,25.2 210.0,29.5 230.0,14.0"></polyline><circle cx="230.0" cy="14.0" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">04</span>
+          <div>
+            <h2>南方纳斯达克100指数发起(QDII)A</h2>
+            <p>016452 · 净值日 2026-07-09</p>
+          </div>
+          <strong class="growth up">+1.52%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>11.08</dd></div>
+            <div><dt>最新盈亏</dt><dd class="up">+0.17</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+10.82%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.05%</dd></div>
+          </dl>
+          <svg class="sparkline up" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,56.5 30.0,47.1 50.0,61.6 70.0,33.7 90.0,14.0 110.0,34.3 130.0,54.2 150.0,55.0 170.0,39.7 190.0,62.0 210.0,58.1 230.0,39.0"></polyline><circle cx="230.0" cy="39.0" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">05</span>
+          <div>
+            <h2>国泰上证科创板人工智能ETF发起联接A</h2>
+            <p>026613 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-3.22%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>109.55</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-3.64</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+9.55%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.52%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,38.0 30.0,54.2 50.0,36.5 70.0,14.0 90.0,24.1 110.0,56.0 130.0,54.9 150.0,60.9 170.0,62.0 190.0,59.6 210.0,30.7 230.0,46.6"></polyline><circle cx="230.0" cy="46.6" r="4"></circle></svg>
+        </div>
+        <p class="hint">加仓观察：下跌日先看仓位上限</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">06</span>
+          <div>
+            <h2>格林稳健价值混合C</h2>
+            <p>009941 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth up">+3.51%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>11.59</dd></div>
+            <div><dt>最新盈亏</dt><dd class="up">+0.39</dd></div>
+            <div><dt>持仓收益</dt><dd class="down">-29.50%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.05%</dd></div>
+          </dl>
+          <svg class="sparkline up" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,16.5 30.0,47.9 50.0,28.9 70.0,35.8 90.0,20.1 110.0,31.4 130.0,25.9 150.0,14.0 170.0,45.2 190.0,46.8 210.0,62.0 230.0,23.9"></polyline><circle cx="230.0" cy="23.9" r="4"></circle></svg>
+        </div>
+        <p class="hint">复盘：亏损较深，避免机械补仓</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">07</span>
+          <div>
+            <h2>易方达安源中短债债券A</h2>
+            <p>110053 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth flat">0.00%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>11,035.49</dd></div>
+            <div><dt>最新盈亏</dt><dd class="flat">0.00</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+0.16%</dd></div>
+            <div><dt>持仓占比</dt><dd>52.30%</dd></div>
+          </dl>
+          <svg class="sparkline flat" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,62.0 30.0,54.0 50.0,30.0 70.0,30.0 90.0,54.0 110.0,46.0 130.0,46.0 150.0,22.0 170.0,22.0 190.0,22.0 210.0,14.0 230.0,14.0"></polyline><circle cx="230.0" cy="14.0" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">08</span>
+          <div>
+            <h2>易方达稳健增长混合C</h2>
+            <p>011778 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-0.07%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>9.40</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-0.01</dd></div>
+            <div><dt>持仓收益</dt><dd class="down">-5.96%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.04%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,35.6 30.0,62.0 50.0,36.9 70.0,45.8 90.0,41.7 110.0,52.8 130.0,38.2 150.0,20.0 170.0,35.6 190.0,16.2 210.0,14.0 230.0,15.9"></polyline><circle cx="230.0" cy="15.9" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">09</span>
+          <div>
+            <h2>易方达上证科创50联接A</h2>
+            <p>011608 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-5.25%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>11.45</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-0.63</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+14.50%</dd></div>
+            <div><dt>持仓占比</dt><dd>0.05%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,43.4 30.0,50.4 50.0,31.1 70.0,14.0 90.0,25.3 110.0,59.6 130.0,62.0 150.0,57.7 170.0,56.6 190.0,53.5 210.0,18.4 230.0,43.5"></polyline><circle cx="230.0" cy="43.5" r="4"></circle></svg>
+        </div>
+        <p class="hint">加仓观察：下跌日先看仓位上限</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">10</span>
+          <div>
+            <h2>易方达环保主题混合A</h2>
+            <p>001856 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-4.83%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>3,072.80</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-155.89</dd></div>
+            <div><dt>持仓收益</dt><dd class="up">+0.39%</dd></div>
+            <div><dt>持仓占比</dt><dd>14.56%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,16.6 30.0,25.8 50.0,25.8 70.0,14.0 90.0,18.5 110.0,48.0 130.0,47.1 150.0,51.1 170.0,54.6 190.0,61.9 210.0,43.6 230.0,62.0"></polyline><circle cx="230.0" cy="62.0" r="4"></circle></svg>
+        </div>
+        <p class="hint">加仓观察：下跌日先看仓位上限</p>
+      </article>
+      <article class="fund-card">
+        <div class="fund-heading">
+          <span class="fund-index">11</span>
+          <div>
+            <h2>鹏华沪深300指数增强A</h2>
+            <p>005870 · 净值日 2026-07-10</p>
+          </div>
+          <strong class="growth down">-1.80%</strong>
+        </div>
+        <div class="fund-body">
+          <dl class="fund-stats">
+            <div><dt>市值</dt><dd>2,426.64</dd></div>
+            <div><dt>最新盈亏</dt><dd class="down">-44.50</dd></div>
+            <div><dt>持仓收益</dt><dd class="down">-0.19%</dd></div>
+            <div><dt>持仓占比</dt><dd>11.50%</dd></div>
+          </dl>
+          <svg class="sparkline down" viewBox="0 0 240 76" role="img" aria-label="近12个净值点走势"><line class="spark-base" x1="10" y1="62" x2="230" y2="62"></line><polyline points="10.0,14.0 30.0,44.8 50.0,33.2 70.0,24.6 90.0,28.5 110.0,57.0 130.0,42.0 150.0,36.2 170.0,51.6 190.0,62.0 210.0,40.1 230.0,58.8"></polyline><circle cx="230.0" cy="58.8" r="4"></circle></svg>
+        </div>
+        <p class="hint">持有观察：暂无明显加减仓信号</p>
+      </article></section>
   </main>
+  <footer>
+    数据来自东方财富公开基金净值，按本地持仓配置估算，不构成投资建议。
+    <a href="./fund-report.png">查看长图版</a>
+  </footer>
 </body>
 </html>
