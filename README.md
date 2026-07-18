@@ -1,3 +1,3 @@
-# 基金日报 Pages
+# 个人基金量化分析 Pages
 
-Responsive public report cards and the legacy PNG report.
+脱敏的组合风险画像、资产配置和规则化月度加减仓建议。
